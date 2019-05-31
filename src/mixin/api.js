@@ -5,6 +5,9 @@ export default {
     apiGetVarieties: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'variety', success: onSuccess })
     },
+    apiGetVarietyData: function (varietyIds, traitIds, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'variety/data?traitIds=' + traitIds + '&varietyIds=' + varietyIds, success: onSuccess })
+    },
     apiGetVarietyDataTraits: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'variety/data/trait', success: onSuccess })
     },

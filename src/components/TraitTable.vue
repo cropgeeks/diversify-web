@@ -52,13 +52,14 @@ export default {
       this.traits.filter(function (c) {
         return c.id === row.id
       })[0].selected = select
+
+      this.$emit('on-trait-selected', row, select)
     }
   },
   mounted: function () {
     var vm = this
 
     this.apiGetVarietyDataTraits(function (result) {
-      console.log(result)
       result.forEach(function (c) {
         c.selected = false
       })

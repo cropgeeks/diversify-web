@@ -53,8 +53,10 @@ export default {
   methods: {
     select: function (row, select) {
       this.varieties.filter(function (c) {
-        return c.varietyname === row.varietyname && c.cropcommonname === row.cropcommonname && c.croplatinname === row.croplatinname && c.plantpartnername === row.plantpartnername
+        return c.id === row.id
       })[0].selected = select
+
+      this.$emit('on-variety-selected', row, select)
     }
   },
   mounted: function () {

@@ -72,7 +72,7 @@
 
       <div v-if="plotData[0].x.length > 0">
         <h3>{{ trait.traitname }}</h3>
-        <Plotly :data="plotData" :layout="plotLayout" ref="chart" />
+        <VuePlotly :data="plotData" :layout="plotLayout" :options="plotOptions" />
       </div>
     </b-container>
   </div>
@@ -85,7 +85,7 @@ import ViewGridIcon from 'vue-material-design-icons/ViewGrid.vue'
 import ViewSequentialIcon from 'vue-material-design-icons/ViewSequential.vue'
 import ViewParallelIcon from 'vue-material-design-icons/ViewParallel.vue'
 
-import { Plotly } from 'vue-plotly'
+import VuePlotly from '@statnett/vue-plotly'
 
 export default {
   data: function () {
@@ -155,12 +155,15 @@ export default {
             ['xy2']
           ]
         }
+      },
+      plotOptions: {
+        displaylogo: false
       }
     }
   },
   components: {
     MagnifyIcon,
-    Plotly,
+    VuePlotly,
     ViewGridIcon,
     ViewParallelIcon,
     ViewSequentialIcon
