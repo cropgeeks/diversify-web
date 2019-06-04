@@ -7,7 +7,7 @@
       <l-tile-layer
         :url="url"
         :attribution="attribution"/>
-      <l-marker v-for="l in locations" :key="l.site + l.location" :lat-lng="l.latLng">
+      <l-marker v-for="l in locationsWithGps" :key="l.sitename + l.othername + l.createdOn" :lat-lng="l.latLng">
         <l-popup class="location-map-popup">
           <p><b>Site: </b> <router-link :to="'/location/' + l.sitename">{{ l.sitename }}</router-link></p>
           <p><b>Partner: </b> {{ l.partnername }}</p>
@@ -15,64 +15,76 @@
         </l-popup>
       </l-marker>
     </l-map>
-    <b-container v-if="location">
-      <h1>{{ location.sitename }} ({{ location.partnername }})</h1>
-      <b-row>
-        <b-col cols=12 md=4 class="mb-3">
-          <b-card bg-variant="dark" text-variant="white">
-            <b-row>
-              <b-col cols=3>
-                <ViewGridIcon class="location-icon"/>
-              </b-col>
-              <b-col cols=9 class="text-right">
-                <div class="category-value">{{ location.plots }}</div>
-                <div>Plots</div>
-              </b-col>
-            </b-row>
-          </b-card>
-        </b-col>
-        <b-col cols=12 md=4 class="mb-3">
-          <b-card bg-variant="dark" text-variant="white">
-            <b-row>
-              <b-col cols=3>
-                <ViewSequentialIcon class="location-icon"/>
-              </b-col>
-              <b-col cols=9 class="text-right">
-                <div class="category-value">{{ location.rows }}</div>
-                <div>Max. rows</div>
-              </b-col>
-            </b-row>
-          </b-card>
-        </b-col>
-        <b-col cols=12 md=4 class="mb-3">
-          <b-card bg-variant="dark" text-variant="white">
-            <b-row>
-              <b-col cols=3>
-                <ViewParallelIcon class="location-icon"/>
-              </b-col>
-              <b-col cols=9 class="text-right">
-                <div class="category-value">{{ location.columns }}</div>
-                <div>Max. columns</div>
-              </b-col>
-            </b-row>
-          </b-card>
-        </b-col>
-      </b-row>
-      <v-client-table v-if="siteStats && siteStats.length > 0" class="table-sm" :data="siteStats" :columns="siteStatsColumns" :options="siteStatsOptions" >
-        <template slot="min" slot-scope="props">{{ props.row.min | toFixed }}</template>
-        <template slot="avg" slot-scope="props">{{ props.row.avg | toFixed }}</template>
-        <template slot="max" slot-scope="props">{{ props.row.max | toFixed }}</template>
-        <template slot="stdv" slot-scope="props">{{ props.row.stdv | toFixed }}</template>
-        <b-button size=sm
-                  variant="primary"
-                  slot="select"
-                  slot-scope="props"
-                  @click="onTraitSelected(props.row)"><MagnifyIcon class="action-icon"/></b-button>
-      </v-client-table>
+    <b-container>
+      <div v-if="locationsWithoutGps && locationsWithoutGps.length > 0">
+        <h2>Locations without GPS coordinates</h2>
+        <ul>
+          <li v-for="l in locationsWithoutGps" :key="l.sitename + l.othername">
+            <a href="#" @click="onLocationSelected(l, $event)">{{ l.sitename }}</a>
+          </li>
+        </ul>
+      </div>
+      <div v-if="location">
+        <h1>{{ location.sitename }} ({{ location.partnername }})</h1>
+        <b-row>
+          <b-col cols=12 md=4 class="mb-3">
+            <b-card bg-variant="dark" text-variant="white">
+              <b-row>
+                <b-col cols=3>
+                  <ViewGridIcon class="location-icon"/>
+                </b-col>
+                <b-col cols=9 class="text-right">
+                  <div class="category-value">{{ location.plots }}</div>
+                  <div>Plots</div>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+          <b-col cols=12 md=4 class="mb-3">
+            <b-card bg-variant="dark" text-variant="white">
+              <b-row>
+                <b-col cols=3>
+                  <ViewSequentialIcon class="location-icon"/>
+                </b-col>
+                <b-col cols=9 class="text-right">
+                  <div class="category-value">{{ location.rows }}</div>
+                  <div>Max. rows</div>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+          <b-col cols=12 md=4 class="mb-3">
+            <b-card bg-variant="dark" text-variant="white">
+              <b-row>
+                <b-col cols=3>
+                  <ViewParallelIcon class="location-icon"/>
+                </b-col>
+                <b-col cols=9 class="text-right">
+                  <div class="category-value">{{ location.columns }}</div>
+                  <div>Max. columns</div>
+                </b-col>
+              </b-row>
+            </b-card>
+          </b-col>
+        </b-row>
+        <div v-if="siteStats && siteStats.length > 0">
+          <v-client-table class="table-sm" :data="siteStats" :columns="siteStatsColumns" :options="siteStatsOptions" >
+            <template slot="min" slot-scope="props">{{ props.row.min | toFixed }}</template>
+            <template slot="avg" slot-scope="props">{{ props.row.avg | toFixed }}</template>
+            <template slot="max" slot-scope="props">{{ props.row.max | toFixed }}</template>
+            <template slot="stdv" slot-scope="props">{{ props.row.stdv | toFixed }}</template>
+            <b-button size=sm
+                      variant="primary"
+                      slot="select"
+                      slot-scope="props"
+                      @click="onTraitSelected(props.row)"><MagnifyIcon class="action-icon"/></b-button>
+          </v-client-table>
 
-      <div v-if="plotData[0].x.length > 0">
-        <h3>{{ trait.traitname }}</h3>
-        <VuePlotly :data="plotData" :layout="plotLayout" :options="plotOptions" />
+          <div v-if="plotData[0].x.length > 0">
+            <h3>{{ trait.traitname }}</h3>
+            <VuePlotly :data="plotData" :layout="plotLayout" :options="plotOptions" />
+          </div>
+        </div>
       </div>
     </b-container>
   </div>
@@ -90,7 +102,8 @@ import VuePlotly from '@statnett/vue-plotly'
 export default {
   data: function () {
     return {
-      locations: [],
+      locationsWithGps: [],
+      locationsWithoutGps: [],
       siteStats: [],
       siteStatsColumns: [ 'traitname', 'traitcode', 'unit', 'year', 'datasetname', 'min', 'avg', 'max', 'stdv', 'select' ],
       siteStatsOptions: {
@@ -174,7 +187,12 @@ export default {
     }
   },
   methods: {
-    onLocationSelected: function (l) {
+    onLocationSelected: function (l, event) {
+      if (event) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
       this.location = l
       var vm = this
 
@@ -199,20 +217,23 @@ export default {
     var vm = this
 
     this.apiGetLocations(function (result) {
-      result = result.filter(function (l) {
+      var withGps = result.filter(function (l) {
         return l.latitude && l.longitude
       })
-      result.forEach(function (l) {
+      vm.locationsWithoutGps = result.filter(function (l) {
+        return !l.latitude || !l.longitude
+      })
+      withGps.forEach(function (l) {
         l.latLng = L.latLng(l.latitude, l.longitude)
       })
-      vm.locations = result
+      vm.locationsWithGps = withGps
 
-      vm.locations.forEach(function (l) {
+      vm.locationsWithGps.forEach(function (l) {
         vm.latLngBounds.extend(l.latLng)
       })
 
-      if (vm.locations.length === 1) {
-        vm.$refs.map.setCenter(vm.locations[0].latLng)
+      if (vm.locationsWithGps.length === 1) {
+        vm.$refs.map.setCenter(vm.locationsWithGps[0].latLng)
         // vm.$refs.map.setZoom(10)
         vm.zoom = 10
       } else {
