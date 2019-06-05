@@ -41,8 +41,11 @@ export default {
         },
         sortable: ['varietyname', 'cropcommonname', 'croplatinname', 'plantpartnername', 'plots', 'datapoints'],
         filterable: ['varietyname', 'cropcommonname', 'croplatinname', 'plantpartnername', 'plots', 'datapoints'],
-        perPage: Number.MAX_SAFE_INTEGER,
-        perPageValues: []
+        perPage: 10,
+        perPageValues: [10, 25, 50, 100],
+        pagination: {
+          nav: 'scroll'
+        }
       }
     }
   },

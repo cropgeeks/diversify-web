@@ -80,7 +80,7 @@
                       @click="onTraitSelected(props.row)"><MagnifyIcon class="action-icon"/></b-button>
           </v-client-table>
 
-          <div v-if="plotData[0].x.length > 0">
+          <div v-if="plotData.length > 0 && plotData[0].x && plotData[0].x.length > 0">
             <h3>{{ trait.traitname }}</h3>
             <VuePlotly :data="plotData" :layout="plotLayout" :options="plotOptions" />
           </div>
@@ -127,8 +127,11 @@ export default {
         },
         sortable: [ 'traitname', 'traitcode', 'unit', 'datasetname', 'year', 'min', 'avg', 'max', 'stdv' ],
         filterable: [ 'traitname', 'traitcode', 'unit', 'datasetname', 'year', 'min', 'avg', 'max', 'stdv' ],
-        perPage: Number.MAX_SAFE_INTEGER,
-        perPageValues: []
+        perPage: 10,
+        perPageValues: [10, 25, 50, 100],
+        pagination: {
+          nav: 'scroll'
+        }
       },
       location: null,
       trait: null,
@@ -136,38 +139,13 @@ export default {
       latLngBounds: L.latLngBounds(),
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      plotData: [{
-        x: [],
-        type: 'histogram',
-        xaxis: 'x',
-        yaxis: 'y',
-        name: ''
-      }, {
-        x: [],
-        type: 'box',
-        xaxis: 'x',
-        yaxis: 'y2',
-        boxpoints: false,
-        name: '',
-        boxmean: 'sd'
-      }],
+      plotData: [],
       plotLayout: {
         xaxis: {
           title: 'Value'
         },
-        yaxis: {
-          title: 'Count'
-        },
         hovermode: 'closest',
-        showlegend: false,
-        grid: {
-          rows: 2,
-          columns: 1,
-          subplots: [
-            ['xy'],
-            ['xy2']
-          ]
-        }
+        boxmode: 'group'
       },
       plotOptions: {
         displaylogo: false
@@ -204,12 +182,21 @@ export default {
       this.trait = trait
       var vm = this
       this.apiGetSiteTraitData(this.location.id, trait.traitid, trait.datasetid, function (result) {
-        vm.plotData[0].x = result.map(function (d) {
-          return +d.value
-        })
-        vm.plotData[1].x = result.map(function (d) {
-          return +d.value
-        })
+        var crops = vm.$_.uniqBy(result, 'crops').map(function (t) { return t.crops })
+
+        vm.plotData = []
+        for (var i in crops) {
+          vm.plotData.push({
+            x: vm.$_.filter(result, ['crops', crops[i]]).map(function (n) { return +n.value }),
+            y: vm.$_.filter(result, ['crops', crops[i]]).map(function (n) { return '' }),
+            type: 'box',
+            xaxis: 'x',
+            boxpoints: false,
+            orientation: 'h',
+            name: crops[i],
+            boxmean: 'sd'
+          })
+        }
       })
     }
   },

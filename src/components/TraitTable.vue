@@ -25,7 +25,6 @@ export default {
   data: function () {
     return {
       traits: [],
-      allMarked: false,
       traitColumns: ['traitname', 'traitcode', 'unit', 'plots', 'datapoints', 'select'],
       traitOptions: {
         headings: {
@@ -38,8 +37,11 @@ export default {
         },
         sortable: ['traitname', 'traitcode', 'unit', 'plots', 'datapoints'],
         filterable: ['traitname', 'traitcode', 'unit', 'plots', 'datapoints'],
-        perPage: Number.MAX_SAFE_INTEGER,
-        perPageValues: []
+        perPage: 10,
+        perPageValues: [10, 25, 50, 100],
+        pagination: {
+          nav: 'scroll'
+        }
       }
     }
   },
@@ -49,11 +51,18 @@ export default {
   },
   methods: {
     select: function (row, select) {
-      this.traits.filter(function (c) {
-        return c.id === row.id
+      this.traits.forEach(function (t) {
+        t.selected = false
+      })
+      this.traits.filter(function (t) {
+        return t.id === row.id
       })[0].selected = select
 
-      this.$emit('on-trait-selected', row, select)
+      var selected = this.traits.filter(function (t) {
+        return t.selected
+      })
+
+      this.$emit('on-traits-selected', selected)
     }
   },
   mounted: function () {

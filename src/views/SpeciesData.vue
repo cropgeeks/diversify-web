@@ -6,7 +6,7 @@
     <VarietyTable @on-variety-selected="onVarietySelected"/>
 
     <h2 class="mt-3">Traits</h2>
-    <TraitTable @on-trait-selected="onTraitSelected"/>
+    <TraitTable @on-traits-selected="onTraitsSelected"/>
 
     <template v-if="selectedVarieties && selectedVarieties.length > 0">
       <h3>Selected varieties</h3>
@@ -22,7 +22,7 @@
               :title="canPlot ? 'Plot' : 'Please select at least one trait and variety.'"
               @click="onPlotClicked">Plot</b-button>
 
-    <VuePlotly v-if="plotData && plotData.length > 0" :data="plotData" :layout="plotLayout" :options="plotOptions" />
+    <VuePlotly v-if="plotData && plotData.length > 0" :data="plotData" :layout="plotLayout" :options="plotOptions" ref="chart" />
   </b-container>
 </template>
 
@@ -44,6 +44,9 @@ export default {
           rows: 1,
           columns: 1,
           pattern: 'independent'
+        },
+        yaxis: {
+          title: 'Value'
         }
       },
       plotOptions: {
@@ -91,9 +94,9 @@ export default {
               boxpoints: false,
               y: vm.$_.filter(result, { varietyname: varieties[v].varietyname, traitname: traits[0] }).map(function (n) { return n.value })
             })
-            vm.plotLayout[yaxisName] = {
-              title: traits[t]
-            }
+            // vm.plotLayout[yaxisName] = {
+            //   title: traits[t]
+            // }
           }
         }
 
@@ -112,14 +115,8 @@ export default {
         })
       }
     },
-    onTraitSelected: function (trait, selected) {
-      if (selected) {
-        this.selectedTraits.push(trait)
-      } else {
-        this.selectedTraits = this.selectedTraits.filter(function (n) {
-          return n.id !== trait.id
-        })
-      }
+    onTraitsSelected: function (traits) {
+      this.selectedTraits = traits
     }
   }
 }
