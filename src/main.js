@@ -34,6 +34,7 @@ Vue.config.productionTip = false
 
 // Set base URL based on environment
 var baseUrl = 'http://localhost:8080/diversify/v1/'
+// var baseUrl = 'https://ics.hutton.ac.uk/diversify/v1/'
 
 store.commit('ON_BASE_URL_CHANGED_MUTATION', baseUrl)
 

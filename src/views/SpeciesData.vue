@@ -84,7 +84,7 @@ export default {
           for (var v = 0; v < varieties.length; v++) {
             var xaxis = t > 0 ? ('x' + (t + 1)) : 'x'
             var yaxis = t > 0 ? ('y' + (t + 1)) : 'y'
-            var yaxisName = t > 0 ? ('yaxis' + (t + 1)) : 'yaxis'
+            // var yaxisName = t > 0 ? ('yaxis' + (t + 1)) : 'yaxis'
             data.push({
               x: vm.$_.filter(result, { varietyname: varieties[v].varietyname, traitname: traits[0] }).map(function (n) { return n.sitename }),
               xaxis: xaxis,

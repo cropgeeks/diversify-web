@@ -17,7 +17,7 @@
             <div class="home-content">
               <img fluid src="../assets/diversify.png" />
               <h1 class="white-text">Welcome to Diversify</h1>
-              <p class="white-text">Work package 2 data</p>
+              <p class="white-text">Designing InnoVative plant teams for Ecosystem Resilience and agricultural Sustainability</p>
             </div>
           </div>
         </div>
