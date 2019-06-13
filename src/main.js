@@ -11,6 +11,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import L from 'leaflet'
 import { LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet'
 import 'leaflet/dist/leaflet.css'
+import VueAnalytics from 'vue-analytics'
 
 Vue.use(BootstrapVue)
 Vue.mixin(mixin)
@@ -51,6 +52,17 @@ router.options.routes.forEach(function (r) {
       }
       c.props.baseUrl = baseUrl
     })
+  }
+})
+
+Vue.use(VueAnalytics, {
+  id: 'UA-49362218-11',
+  router,
+  autoTracking: {
+    exceptions: true
+  },
+  debug: {
+    sendHitTask: process.env.NODE_ENV === 'production'
   }
 })
 

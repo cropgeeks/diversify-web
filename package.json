@@ -17,6 +17,7 @@
     "lodash": "^4.17.11",
     "plotly.js-dist": "^1.48.0",
     "vue": "^2.6.10",
+    "vue-analytics": "^5.17.0",
     "vue-material-design-icons": "^3.2.0",
     "vue-router": "^3.0.6",
     "vue-tables-2": "^1.4.70",

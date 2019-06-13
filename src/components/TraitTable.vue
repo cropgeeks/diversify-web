@@ -51,9 +51,9 @@ export default {
   },
   methods: {
     select: function (row, select) {
-      this.traits.forEach(function (t) {
-        t.selected = false
-      })
+      // this.traits.forEach(function (t) {
+      //   t.selected = false
+      // })
       this.traits.filter(function (t) {
         return t.id === row.id
       })[0].selected = select
