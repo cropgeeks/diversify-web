@@ -15,7 +15,7 @@
         <div class="row">
           <div class="col-md-10 offset-md-1">
             <div class="home-content">
-              <img fluid src="../assets/diversify.png" />
+              <b-img fluid :src="require('@/assets/diversify.png')" />
               <h1 class="white-text">Welcome to Diversify</h1>
               <p class="white-text">Designing InnoVative plant teams for Ecosystem Resilience and agricultural Sustainability</p>
             </div>

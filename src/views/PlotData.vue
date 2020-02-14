@@ -34,7 +34,7 @@
                   <ViewGridIcon class="location-icon"/>
                 </b-col>
                 <b-col cols=9 class="text-right">
-                  <div class="category-value">{{ location.plots }}</div>
+                  <div class="category-value">{{ location.plots ? location.plots : 'N/A' }}</div>
                   <div>Plots</div>
                 </b-col>
               </b-row>
@@ -47,7 +47,7 @@
                   <ViewSequentialIcon class="location-icon"/>
                 </b-col>
                 <b-col cols=9 class="text-right">
-                  <div class="category-value">{{ location.rows }}</div>
+                  <div class="category-value">{{ location.rows ? location.rows : 'N/A' }}</div>
                   <div>Max. rows</div>
                 </b-col>
               </b-row>
@@ -60,7 +60,7 @@
                   <ViewParallelIcon class="location-icon"/>
                 </b-col>
                 <b-col cols=9 class="text-right">
-                  <div class="category-value">{{ location.columns }}</div>
+                  <div class="category-value">{{ location.columns ? location.columns : 'N/A' }}</div>
                   <div>Max. columns</div>
                 </b-col>
               </b-row>
@@ -74,16 +74,22 @@
             <template slot="max" slot-scope="props">{{ props.row.max | toFixed }}</template>
             <template slot="stdv" slot-scope="props">{{ props.row.stdv | toFixed }}</template>
             <b-button size=sm
-                      variant="primary"
                       slot="select"
                       slot-scope="props"
-                      @click="onTraitSelected(props.row)"><MagnifyIcon class="action-icon"/></b-button>
+                      :variant="isSelected(props.row) ? 'danger' : 'success'"
+                      @click="onTraitSelected(props.row)">
+              <MinusIcon class="action-icon" v-if="isSelected(props.row)" />
+              <PlusIcon class="action-icon" v-else />
+            </b-button>
           </v-client-table>
 
-          <div v-if="plotData.length > 0 && plotData[0].x && plotData[0].x.length > 0">
-            <h3>{{ trait.traitname }}</h3>
-            <VuePlotly :data="plotData" :layout="plotLayout" :options="plotOptions" />
-          </div>
+          <template v-if="plotData && plotData.length > 0">
+            <b-button @click="clearCharts">Clear</b-button>
+            <div v-for="(chartData, index) in plotData" :key="`plot-level-chart-${index}`">
+              <h3>{{ chartData.trait.traitname }} - <small>{{ chartData.site.name }} - {{ chartData.trait.year }}</small></h3>
+              <VuePlotly :data="chartData.data" :layout="plotLayout" :options="plotOptions" />
+            </div>
+          </template>
         </div>
       </div>
     </b-container>
@@ -92,7 +98,9 @@
 
 <script>
 import L from 'leaflet'
-import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
+// import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
+import PlusIcon from 'vue-material-design-icons/Plus'
+import MinusIcon from 'vue-material-design-icons/Minus'
 import ViewGridIcon from 'vue-material-design-icons/ViewGrid.vue'
 import ViewSequentialIcon from 'vue-material-design-icons/ViewSequential.vue'
 import ViewParallelIcon from 'vue-material-design-icons/ViewParallel.vue'
@@ -134,12 +142,12 @@ export default {
         }
       },
       location: null,
-      trait: null,
       zoom: 3,
       latLngBounds: L.latLngBounds(),
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       plotData: [],
+      selectedTraits: [],
       plotLayout: {
         xaxis: {
           title: 'Value'
@@ -153,7 +161,8 @@ export default {
     }
   },
   components: {
-    MagnifyIcon,
+    PlusIcon,
+    MinusIcon,
     VuePlotly,
     ViewGridIcon,
     ViewParallelIcon,
@@ -165,6 +174,9 @@ export default {
     }
   },
   methods: {
+    isSelected: function (trait) {
+      return this.selectedTraits.indexOf(this.location.id + '-' + trait.traitid) !== -1
+    },
     onLocationSelected: function (l, event) {
       if (event) {
         event.preventDefault()
@@ -172,32 +184,49 @@ export default {
       }
 
       this.location = l
-      var vm = this
 
-      this.apiGetLocationStats(l.id, function (result) {
-        vm.siteStats = result
+      this.apiGetLocationStats(l.id, result => {
+        this.siteStats = result
       })
     },
+    clearCharts: function () {
+      this.plotData = []
+      this.selectedTraits = []
+    },
     onTraitSelected: function (trait) {
-      this.trait = trait
-      var vm = this
-      this.apiGetSiteTraitData(this.location.id, trait.traitid, trait.datasetid, function (result) {
-        var crops = vm.$_.uniqBy(result, 'crops').map(function (t) { return t.crops })
+      if (this.selectedTraits.indexOf(this.location.id + '-' + trait.traitid) === -1) {
+        this.selectedTraits.push(this.location.id + '-' + trait.traitid)
 
-        vm.plotData = []
-        for (var i in crops) {
-          vm.plotData.push({
-            x: vm.$_.filter(result, ['crops', crops[i]]).map(function (n) { return +n.value }),
-            y: vm.$_.filter(result, ['crops', crops[i]]).map(function (n) { return '' }),
-            type: 'box',
-            xaxis: 'x',
-            boxpoints: false,
-            orientation: 'h',
-            name: crops[i],
-            boxmean: 'sd'
+        this.apiGetSiteTraitData(this.location.id, trait.traitid, trait.datasetid, result => {
+          var crops = this.$_.uniqBy(result, 'crops').map(function (t) { return t.crops })
+
+          var data = []
+          for (var i in crops) {
+            data.push({
+              x: this.$_.filter(result, ['crops', crops[i]]).map(function (n) { return +n.value }),
+              y: this.$_.filter(result, ['crops', crops[i]]).map(function (n) { return '' }),
+              type: 'box',
+              xaxis: 'x',
+              boxpoints: false,
+              orientation: 'h',
+              name: crops[i],
+              boxmean: 'sd'
+            })
+          }
+
+          this.plotData.push({
+            trait: trait,
+            site: {
+              id: this.location.id,
+              name: this.location.sitename
+            },
+            data: data
           })
-        }
-      })
+        })
+      } else {
+        this.selectedTraits = this.selectedTraits.filter(t => t !== (this.location.id + '-' + trait.traitid))
+        this.plotData = this.plotData.filter(d => d.trait.traitid !== trait.traitid || d.site.id !== this.location.id)
+      }
     }
   },
   mounted: function () {

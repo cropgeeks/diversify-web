@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="lg" type="dark" variant="dark">
+    <b-navbar toggleable="lg" type="dark" variant="dark" class="navigation">
       <b-navbar-brand to="/">Diversify</b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -31,4 +31,7 @@ export default {
 </script>
 
 <style>
+.navigation {
+  z-index: 1;
+}
 </style>
