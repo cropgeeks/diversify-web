@@ -22,6 +22,12 @@ export default new Router({
       name: 'speciesdata',
       component: () => import(/* webpackChunkName: "speciesdata" */ './views/SpeciesData.vue'),
       props: { baseUrl: null }
+    },
+    {
+      path: '/traits',
+      name: 'traits',
+      component: () => import(/* webpackChunkName: "traits" */ './views/Traits.vue'),
+      props: { baseUrl: null }
     }
   ]
 })

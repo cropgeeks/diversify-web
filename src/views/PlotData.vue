@@ -9,7 +9,8 @@
         :attribution="attribution"/>
       <l-marker v-for="l in locationsWithGps" :key="l.sitename + l.othername + l.createdOn" :lat-lng="l.latLng">
         <l-popup class="location-map-popup">
-          <p><b>Site: </b> <router-link :to="'/location/' + l.sitename">{{ l.sitename }}</router-link></p>
+          <!-- <p><b>Site: </b> <router-link :to="'/location/' + l.sitename">{{ l.sitename }}</router-link></p> -->
+          <p><b>Site: </b> {{ l.sitename }}</p>
           <p><b>Partner: </b> {{ l.partnername }}</p>
           <b-button variant="primary" @click="onLocationSelected(l)">Select</b-button>
         </l-popup>
@@ -83,13 +84,7 @@
             </b-button>
           </v-client-table>
 
-          <template v-if="plotData && plotData.length > 0">
-            <b-button @click="clearCharts">Clear</b-button>
-            <div v-for="(chartData, index) in plotData" :key="`plot-level-chart-${index}`">
-              <h3>{{ chartData.trait.traitname }} - <small>{{ chartData.site.name }} - {{ chartData.trait.year }}</small></h3>
-              <VuePlotly :data="chartData.data" :layout="plotLayout" :options="plotOptions" />
-            </div>
-          </template>
+          <PlotTraitChart :data="plotData" v-on:clear="clearCharts"/>
         </div>
       </div>
     </b-container>
@@ -104,8 +99,7 @@ import MinusIcon from 'vue-material-design-icons/Minus'
 import ViewGridIcon from 'vue-material-design-icons/ViewGrid.vue'
 import ViewSequentialIcon from 'vue-material-design-icons/ViewSequential.vue'
 import ViewParallelIcon from 'vue-material-design-icons/ViewParallel.vue'
-
-import VuePlotly from '@statnett/vue-plotly'
+import PlotTraitChart from '@/components/charts/PlotTraitChart'
 
 export default {
   data: function () {
@@ -147,26 +141,16 @@ export default {
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       plotData: [],
-      selectedTraits: [],
-      plotLayout: {
-        xaxis: {
-          title: 'Value'
-        },
-        hovermode: 'closest',
-        boxmode: 'group'
-      },
-      plotOptions: {
-        displaylogo: false
-      }
+      selectedTraits: []
     }
   },
   components: {
     PlusIcon,
     MinusIcon,
-    VuePlotly,
     ViewGridIcon,
     ViewParallelIcon,
-    ViewSequentialIcon
+    ViewSequentialIcon,
+    PlotTraitChart
   },
   filters: {
     toFixed: function (v) {
@@ -198,34 +182,11 @@ export default {
         this.selectedTraits.push(this.location.id + '-' + trait.traitid)
 
         this.apiGetSiteTraitData(this.location.id, trait.traitid, trait.datasetid, result => {
-          var crops = this.$_.uniqBy(result, 'crops').map(function (t) { return t.crops })
-
-          var data = []
-          for (var i in crops) {
-            data.push({
-              x: this.$_.filter(result, ['crops', crops[i]]).map(function (n) { return +n.value }),
-              y: this.$_.filter(result, ['crops', crops[i]]).map(function (n) { return '' }),
-              type: 'box',
-              xaxis: 'x',
-              boxpoints: false,
-              orientation: 'h',
-              name: crops[i],
-              boxmean: 'sd'
-            })
-          }
-
-          this.plotData.push({
-            trait: trait,
-            site: {
-              id: this.location.id,
-              name: this.location.sitename
-            },
-            data: data
-          })
+          this.plotData.push(result)
         })
       } else {
         this.selectedTraits = this.selectedTraits.filter(t => t !== (this.location.id + '-' + trait.traitid))
-        this.plotData = this.plotData.filter(d => d.trait.traitid !== trait.traitid || d.site.id !== this.location.id)
+        this.plotData = this.plotData.filter(d => d[0].traitId !== trait.traitid || d[0].siteid !== this.location.id)
       }
     }
   },
