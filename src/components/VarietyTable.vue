@@ -27,7 +27,6 @@ export default {
   data: function () {
     return {
       varieties: [],
-      allMarked: false,
       varietyColumns: ['varietyname', 'cropcommonname', 'croplatinname', 'plantpartnername', 'plots', 'datapoints', 'select'],
       varietyOptions: {
         headings: {

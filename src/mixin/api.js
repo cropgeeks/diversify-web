@@ -20,6 +20,12 @@ export default {
     apiGetSiteTraitData: function (siteId, traitId, datasetId, onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'site/' + siteId + '/data/' + traitId, data: { datasetId: datasetId }, success: onSuccess })
     },
+    apiGetTraitPlotData: function (traitIds, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'trait/' + traitIds + '/plot', dataType: 'blob', success: onSuccess })
+    },
+    apiGetTraitSpeciesData: function (traitIds, onSuccess) {
+      this.unauthAjax({ url: this.getBaseUrl() + 'trait/' + traitIds + '/species', dataType: 'blob', success: onSuccess })
+    },
     apiGetTraits: function (onSuccess) {
       this.unauthAjax({ url: this.getBaseUrl() + 'trait', success: onSuccess })
     },

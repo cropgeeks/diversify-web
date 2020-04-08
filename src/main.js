@@ -13,6 +13,8 @@ import { LMap, LTileLayer, LMarker, LPopup } from 'vue2-leaflet'
 import 'leaflet/dist/leaflet.css'
 import VueAnalytics from 'vue-analytics'
 
+let axiosDefaults = require('axios/lib/defaults')
+
 Vue.use(BootstrapVue)
 Vue.mixin(mixin)
 Vue.mixin(api)
@@ -36,6 +38,8 @@ Vue.config.productionTip = false
 // Set base URL based on environment
 var baseUrl = 'http://localhost:8080/diversify/v1/'
 // var baseUrl = 'https://ics.hutton.ac.uk/diversify/v1/'
+
+axiosDefaults.baseURL = baseUrl
 
 store.commit('ON_BASE_URL_CHANGED_MUTATION', baseUrl)
 
@@ -69,12 +73,8 @@ Vue.use(VueAnalytics, {
 // Make sure jQuery is available
 Vue.use({
   install: function (Vue, options) {
-    Vue.prototype.$jQuery = require('jquery')
-    window.jQuery = Vue.prototype.$jQuery
-  }
-})
-Vue.use({
-  install: function (Vue, options) {
+    Vue.prototype.$plotly = require('@/plugins/charts/custom-plotly')
+    window.Plotly = Vue.prototype.$plotly
     Vue.prototype.$_ = require('lodash')
     window._ = Vue.prototype.$_
   }
