@@ -4,6 +4,8 @@ export function plotlyScatterMatrix() {
 		colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"],
 		height = null,
 		width = null,
+		idColumn = 'dbId',
+		nameColumn = 'name',
 		columnsToIgnore = [],
 		onPointClicked = null,
 		onPointsSelected = null;
@@ -39,11 +41,11 @@ export function plotlyScatterMatrix() {
 			});
 
 			for (var i = 0; i < cats.length; i++) {
-				var ids = cats[i] ? unpackConditional(rows, 'dbId', colorBy, cats[i]) : unpack(rows, 'dbId');
+				var ids = cats[i] ? unpackConditional(rows, idColumn, colorBy, cats[i]) : unpack(rows, idColumn);
 				ids = ids.map(function (i) {
 					return i + "-" + uuidv4();
 				});
-				var names = cats[i] ? unpackConditional(rows, 'name', colorBy, cats[i]) : unpack(rows, 'name');
+				var names = cats[i] ? unpackConditional(rows, nameColumn, colorBy, cats[i]) : unpack(rows, nameColumn);
 
 				data.push({
 					type: 'splom',
@@ -103,7 +105,6 @@ export function plotlyScatterMatrix() {
 			});
 
 			var config = {
-				modeBarButtonsToRemove: ['toImage'],
 				displayModeBar: true,
 				responsive: true,
 				displaylogo: false
@@ -222,6 +223,18 @@ export function plotlyScatterMatrix() {
 	chart.columnsToIgnore = function (_) {
 		if (!arguments.length) return columnsToIgnore;
 		columnsToIgnore = _;
+		return chart;
+	};
+
+	chart.idColumn = function (_) {
+		if (!arguments.length) return idColumn;
+		idColumn = _;
+		return chart;
+	};
+
+	chart.nameColumn = function (_) {
+		if (!arguments.length) return nameColumn;
+		nameColumn = _;
 		return chart;
 	};
 

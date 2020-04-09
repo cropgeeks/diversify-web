@@ -1,8 +1,14 @@
 <template>
   <div>
-    <b-input v-model="filter" placeholder="Filter" />
+    <b-input v-model="filter" placeholder="Filter" class="border-bottom-0 table-filter" />
 
-    <b-table striped hover responsive outlined show-empty small :items="traits" :fields="fields" :filter="filter" :per-page="10" :current-page="currentPage">
+    <b-table striped hover responsive outlined show-empty small class="mb-0"
+             :items="traits"
+             :fields="fields"
+             :filter="filter"
+             :per-page="10"
+             :current-page="currentPage"
+             :sort-by.sync="sortBy">
       <template v-slot:cell(selected)="data">
         <b-button v-if="data.item.selected"
                 size="sm"
@@ -16,6 +22,7 @@
     </b-table>
 
     <b-pagination
+      class="table-pagination"
       v-model="currentPage"
       :total-rows="traits.length"
       :per-page="10" />
@@ -33,6 +40,7 @@ export default {
       currentPage: 1,
       traits: [],
       selected: [],
+      sortBy: 'traitname',
       fields: [{
         key: 'traitname',
         label: 'Trait name',
@@ -87,5 +95,17 @@ export default {
 </script>
 
 <style>
-
+.table-filter {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.table-pagination .page-link {
+  border-top: 0;
+}
+.table-pagination .page-item:first-child .page-link {
+  border-top-left-radius: 0;
+}
+.table-pagination .page-item:last-child .page-link {
+  border-top-right-radius: 0;
+}
 </style>

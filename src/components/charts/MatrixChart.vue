@@ -12,6 +12,18 @@ export default {
     dataFile: {
       type: Blob,
       default: () => null
+    },
+    colorBy: {
+      type: String,
+      default: null
+    },
+    idColumn: {
+      type: String,
+      default: null
+    },
+    nameColumn: {
+      type: String,
+      default: null
     }
   },
   data: function () {
@@ -23,6 +35,9 @@ export default {
   },
   watch: {
     dataFile: function (newValue, oldValue) {
+      this.redraw()
+    },
+    colorBy: function (newValue, oldValue) {
       this.redraw()
     }
   },
@@ -37,7 +52,9 @@ export default {
         this.$plotly.d3.select(this.$refs.matrixChart)
           .datum(data)
           .call(plotlyScatterMatrix()
-            .colorBy('year')
+            .colorBy(this.colorBy)
+            .idColumn(this.idColumn)
+            .nameColumn(this.nameColumn)
             .columnsToIgnore(['crops', 'plotcode', 'sitename', 'dataset', 'year', 'varietyname', 'cropcommonname'])
             .onPointClicked(p => {
               console.log(p)
