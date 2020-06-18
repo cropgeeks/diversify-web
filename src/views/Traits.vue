@@ -43,14 +43,14 @@ export default {
       colorOptionsPlot: [
         { value: null, text: 'No coloring' },
         { value: 'crops', text: 'Crops' },
-        { value: 'sitename', text: 'Site' },
+        { value: 'partnername', text: 'Site' },
         { value: 'year', text: 'Year' }
       ],
       colorOptionsSpecies: [
         { value: null, text: 'No coloring' },
         { value: 'varietyname', text: 'Variety' },
         { value: 'cropcommonname', text: 'Crop' },
-        { value: 'sitename', text: 'Site' },
+        { value: 'partnername', text: 'Site' },
         { value: 'year', text: 'Year' }
       ]
     }

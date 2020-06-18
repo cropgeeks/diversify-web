@@ -99,7 +99,7 @@ export default {
             }
 
             data[traits[t]].push({
-              x: this.$_.filter(result, { varietyname: varietyName, traitname: traits[t] }).map(function (n) { return n.sitename }),
+              x: this.$_.filter(result, { varietyname: varietyName, traitname: traits[t] }).map(function (n) { return n.partnername }),
               xaxis: 'xaxis',
               yaxis: 'yaxis',
               name: varietyName + ' (' + varieties[v].cropname + ')',

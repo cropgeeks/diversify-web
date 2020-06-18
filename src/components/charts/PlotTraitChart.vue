@@ -56,7 +56,7 @@ export default {
           },
           site: {
             id: n[0].siteid,
-            name: n[0].sitename
+            name: n[0].partnername
           },
           data: data
         }
