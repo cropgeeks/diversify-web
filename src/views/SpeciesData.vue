@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import VarietyTable from '../components/VarietyTable.vue'
 import VarietyDataTraitTable from '../components/VarietyDataTraitTable.vue'
 
@@ -86,15 +87,26 @@ export default {
 
           data[traits[t]] = []
           for (var v = 0; v < varieties.length; v++) {
+            const varietyName = varieties[v].varietyname
+
+            let color
+
+            if (varietyName in this.speciesTraitChartColors) {
+              color = this.speciesTraitChartColors[varietyName]
+            } else {
+              color = this.colors[Object.keys(this.speciesTraitChartColors).length % this.colors.length]
+              Vue.set(this.speciesTraitChartColors, varietyName, color)
+            }
+
             data[traits[t]].push({
-              x: this.$_.filter(result, { varietyname: varieties[v].varietyname, traitname: traits[t] }).map(function (n) { return n.sitename }),
+              x: this.$_.filter(result, { varietyname: varietyName, traitname: traits[t] }).map(function (n) { return n.sitename }),
               xaxis: 'xaxis',
               yaxis: 'yaxis',
-              name: varieties[v].varietyname + ' (' + varieties[v].cropname + ')',
+              name: varietyName + ' (' + varieties[v].cropname + ')',
               type: 'box',
-              marker: { color: this.colors[v % this.colors.length] },
+              marker: { color: color },
               boxpoints: false,
-              y: this.$_.filter(result, { varietyname: varieties[v].varietyname, traitname: traits[t] }).map(function (n) { return n.value })
+              y: this.$_.filter(result, { varietyname: varietyName, traitname: traits[t] }).map(function (n) { return n.value })
             })
           }
         }
@@ -114,6 +126,9 @@ export default {
     onTraitsSelected: function (traits) {
       this.selectedTraits = traits
     }
+  },
+  mounted: function () {
+    this.speciesTraitChartColors = {}
   }
 }
 </script>

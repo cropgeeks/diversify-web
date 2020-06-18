@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import VuePlotly from '@statnett/vue-plotly'
 
 export default {
@@ -25,15 +26,25 @@ export default {
 
         var data = []
         for (var i in crops) {
+          const cropName = crops[i]
+          let color
+
+          if (cropName in this.plotTraitChartColors) {
+            color = this.plotTraitChartColors[cropName]
+          } else {
+            color = this.colors[Object.keys(this.plotTraitChartColors).length % this.colors.length]
+            Vue.set(this.plotTraitChartColors, cropName, color)
+          }
+
           data.push({
-            x: this.$_.filter(n, ['crops', crops[i]]).map(function (n) { return +n.value }),
-            y: this.$_.filter(n, ['crops', crops[i]]).map(function (n) { return '' }),
+            x: this.$_.filter(n, ['crops', cropName]).map(function (n) { return +n.value }),
+            y: this.$_.filter(n, ['crops', cropName]).map(function (n) { return '' }),
             type: 'box',
             xaxis: 'x',
-            marker: { color: this.colors[i % this.colors.length] },
+            marker: { color: color },
             boxpoints: false,
             orientation: 'h',
-            name: crops[i],
+            name: cropName,
             boxmean: 'sd'
           })
         }

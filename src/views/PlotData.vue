@@ -7,7 +7,7 @@
       <l-tile-layer
         :url="url"
         :attribution="attribution"/>
-      <l-marker v-for="l in locationsWithGps" :key="l.sitename + l.othername + l.createdOn" :lat-lng="l.latLng">
+      <l-marker v-for="(l, index) in locationsWithGps" :key="`map-marker-${index}`" :lat-lng="l.latLng">
         <l-popup class="location-map-popup">
           <!-- <p><b>Site: </b> <router-link :to="'/location/' + l.sitename">{{ l.sitename }}</router-link></p> -->
           <p><b>Site: </b> {{ l.sitename }}</p>
@@ -20,7 +20,7 @@
       <div v-if="locationsWithoutGps && locationsWithoutGps.length > 0">
         <h2>Locations without GPS coordinates</h2>
         <ul>
-          <li v-for="l in locationsWithoutGps" :key="l.sitename + l.othername">
+          <li v-for="(l, index) in locationsWithoutGps" :key="`list-item-${index}`">
             <a href="#" @click="onLocationSelected(l, $event)">{{ l.sitename }}</a>
           </li>
         </ul>
@@ -176,6 +176,7 @@ export default {
     clearCharts: function () {
       this.plotData = []
       this.selectedTraits = []
+      this.plotTraitChartColors = {}
     },
     onTraitSelected: function (trait) {
       if (this.selectedTraits.indexOf(this.location.id + '-' + trait.traitid) === -1) {
