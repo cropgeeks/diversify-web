@@ -12,14 +12,7 @@ export function plotlyScatterMatrix() {
 
 	function chart(selection) {
 		selection.each(function (rows) {
-			var symbolList = Plotly.PlotSchema.get()
-				.traces
-				.scatter
-				.attributes
-				.marker
-				.symbol
-				.values
-				.filter(s => typeof s === 'string')
+			var symbolList = [ "circle", "square", "diamond", "cross", "x", "triangle-up", "triangle-down", "triangle-left", "triangle-right", "triangle-ne", "triangle-se", "triangle-sw", "triangle-nw", "pentagon", "hexagon", "hexagon2", "octagon", "star", "hexagram", "star-triangle-up", "star-triangle-down", "star-square", "star-diamond", "diamond-tall", "diamond-wide", "hourglass", "bowtie" ]
 
 			var categories = new Set();
 

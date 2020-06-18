@@ -92,6 +92,7 @@ export default {
               yaxis: 'yaxis',
               name: varieties[v].varietyname + ' (' + varieties[v].cropname + ')',
               type: 'box',
+              marker: { color: this.colors[v % this.colors.length] },
               boxpoints: false,
               y: this.$_.filter(result, { varietyname: varieties[v].varietyname, traitname: traits[t] }).map(function (n) { return n.value })
             })

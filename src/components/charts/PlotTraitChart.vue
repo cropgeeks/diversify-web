@@ -30,6 +30,7 @@ export default {
             y: this.$_.filter(n, ['crops', crops[i]]).map(function (n) { return '' }),
             type: 'box',
             xaxis: 'x',
+            marker: { color: this.colors[i % this.colors.length] },
             boxpoints: false,
             orientation: 'h',
             name: crops[i],

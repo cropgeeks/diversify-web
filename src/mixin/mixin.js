@@ -1,6 +1,11 @@
 import axios from 'axios'
 
 export default {
+  data: function () {
+    return {
+      colors: ['#910080', '#ff7c00', '#5ec418', '#00a0f1', '#c5e000', '#ff007a', '#222183', '#c83831', '#fff600']
+    }
+  },
   methods: {
     uuidv4: function () {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

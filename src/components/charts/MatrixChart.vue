@@ -56,6 +56,7 @@ export default {
             .idColumn(this.idColumn)
             .nameColumn(this.nameColumn)
             .columnsToIgnore(['crops', 'plotcode', 'sitename', 'dataset', 'year', 'varietyname', 'cropcommonname'])
+            .colors(this.colors)
             .onPointClicked(p => {
               console.log(p)
             })
