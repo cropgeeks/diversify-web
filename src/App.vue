@@ -10,6 +10,7 @@
           <b-nav-item to="/plotdata">Plot data</b-nav-item>
           <b-nav-item to="/speciesdata">Species data</b-nav-item>
           <b-nav-item to="/traits">Traits</b-nav-item>
+          <b-nav-item to="/varieties">Varieties</b-nav-item>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->

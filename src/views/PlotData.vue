@@ -182,9 +182,7 @@ export default {
       if (this.selectedTraits.indexOf(this.location.id + '-' + trait.traitid) === -1) {
         this.selectedTraits.push(this.location.id + '-' + trait.traitid)
 
-        this.apiGetSiteTraitData(this.location.id, trait.traitid, trait.datasetid, result => {
-          this.plotData.push(result)
-        })
+        this.apiGetSiteTraitData(this.location.id, trait.traitid, trait.datasetid, result => this.plotData.push(result))
       } else {
         this.selectedTraits = this.selectedTraits.filter(t => t !== (this.location.id + '-' + trait.traitid))
         this.plotData = this.plotData.filter(d => d[0].traitId !== trait.traitid || d[0].siteid !== this.location.id)

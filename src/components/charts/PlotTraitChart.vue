@@ -1,16 +1,16 @@
 <template>
   <div v-if="data && data.length > 0">
     <b-button @click="$emit('clear')">Clear</b-button>
-    <div v-for="(chartData, index) in chartData" :key="`plot-level-chart-${index}`">
-      <h3>{{ chartData.trait.traitname }} - <small>{{ chartData.site.name }} - {{ chartData.trait.year }}</small></h3>
-      <VuePlotly :data="chartData.data" :layout="plotLayout" :options="plotOptions" />
+    <div v-for="cd in chartData" :key="`plot-level-chart-${cd.trait.traitId}`">
+      <h3>{{ cd.trait.traitname }} - <small>{{ cd.site.name }} - {{ cd.trait.year }}</small></h3>
+
+      <div :ref="`plot-data-${cd.trait.traitId}`" />
     </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
-import VuePlotly from '@statnett/vue-plotly'
 
 export default {
   props: {
@@ -21,7 +21,8 @@ export default {
   },
   watch: {
     data: function (newValue, oldValue) {
-      this.chartData = newValue.map(n => {
+      this.chartData = {}
+      newValue.forEach(n => {
         var crops = this.$_.uniqBy(n, 'crops').map(function (t) { return t.crops })
 
         var data = []
@@ -49,23 +50,30 @@ export default {
           })
         }
 
-        return {
+        Vue.set(this.chartData, n[0].traitId, {
           trait: {
             year: n[0].year,
-            traitname: n[0].traitname
+            traitname: n[0].traitname,
+            traitId: n[0].traitId
           },
           site: {
             id: n[0].siteid,
             name: n[0].partnername
           },
           data: data
-        }
+        })
+
+        const id = n[0].traitId
+        this.$nextTick(() => {
+          this.$plotly.purge(this.$refs[`plot-data-${id}`][0])
+          this.$plotly.plot(this.$refs[`plot-data-${id}`][0], this.chartData[id].data, this.plotLayout, this.plotOptions)
+        })
       })
     }
   },
   data: function () {
     return {
-      chartData: [],
+      chartData: {},
       plotLayout: {
         xaxis: {
           title: 'Value'
@@ -74,12 +82,10 @@ export default {
         boxmode: 'group'
       },
       plotOptions: {
+        responsive: true,
         displaylogo: false
       }
     }
-  },
-  components: {
-    VuePlotly
   }
 }
 </script>

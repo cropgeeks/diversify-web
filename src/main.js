@@ -36,28 +36,15 @@ L.Icon.Default.mergeOptions({
 Vue.config.productionTip = false
 
 // Set base URL based on environment
-var baseUrl = 'http://localhost:8080/diversify/v1/'
-// var baseUrl = 'https://ics.hutton.ac.uk/diversify/v1/'
+let baseUrl = './api/'
+
+if (process.env.VUE_APP_BASE_URL) {
+  baseUrl = process.env.VUE_APP_BASE_URL
+}
 
 axiosDefaults.baseURL = baseUrl
 
 store.commit('ON_BASE_URL_CHANGED_MUTATION', baseUrl)
-
-router.options.routes.forEach(function (r) {
-  if (!r.props) {
-    r.props = {}
-  }
-  r.props.baseUrl = baseUrl
-
-  if (r.children) {
-    r.children.forEach(function (c) {
-      if (!c.props) {
-        c.props = {}
-      }
-      c.props.baseUrl = baseUrl
-    })
-  }
-})
 
 Vue.use(VueAnalytics, {
   id: 'UA-49362218-11',

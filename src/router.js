@@ -8,26 +8,27 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue'),
-      props: { baseUrl: null }
+      component: () => import(/* webpackChunkName: "home" */ './views/Home.vue')
     },
     {
       path: '/plotdata',
       name: 'plotdata',
-      component: () => import(/* webpackChunkName: "plotdata" */ './views/PlotData.vue'),
-      props: { baseUrl: null }
+      component: () => import(/* webpackChunkName: "plotdata" */ './views/PlotData.vue')
     },
     {
       path: '/speciesdata',
       name: 'speciesdata',
-      component: () => import(/* webpackChunkName: "speciesdata" */ './views/SpeciesData.vue'),
-      props: { baseUrl: null }
+      component: () => import(/* webpackChunkName: "speciesdata" */ './views/SpeciesData.vue')
     },
     {
       path: '/traits',
       name: 'traits',
-      component: () => import(/* webpackChunkName: "traits" */ './views/Traits.vue'),
-      props: { baseUrl: null }
+      component: () => import(/* webpackChunkName: "traits" */ './views/Traits.vue')
+    },
+    {
+      path: '/varieties',
+      name: 'varieties',
+      component: () => import(/* webpackChunkName: "varieties" */ './views/Varieties.vue')
     }
   ]
 })
