@@ -69,22 +69,8 @@
           </b-col>
         </b-row>
         <div v-if="siteStats && siteStats.length > 0">
-          <v-client-table class="table-sm" :data="siteStats" :columns="siteStatsColumns" :options="siteStatsOptions" >
-            <template slot="min" slot-scope="props">{{ props.row.min | toFixed }}</template>
-            <template slot="avg" slot-scope="props">{{ props.row.avg | toFixed }}</template>
-            <template slot="max" slot-scope="props">{{ props.row.max | toFixed }}</template>
-            <template slot="stdv" slot-scope="props">{{ props.row.stdv | toFixed }}</template>
-            <b-button size=sm
-                      slot="select"
-                      slot-scope="props"
-                      :variant="isSelected(props.row) ? 'danger' : 'success'"
-                      @click="onTraitSelected(props.row)">
-              <MinusIcon class="action-icon" v-if="isSelected(props.row)" />
-              <PlusIcon class="action-icon" v-else />
-            </b-button>
-          </v-client-table>
-
-          <PlotTraitChart :data="plotData" v-on:clear="clearCharts"/>
+          <PlotTraitTable :selectedTraits="selectedTraits" :locationId="location ? location.id : null" @traits-selected="onTraitSelected" />
+          <PlotTraitChart :plotData="plotData" v-on:clear="clearCharts"/>
         </div>
       </div>
     </b-container>
@@ -93,13 +79,11 @@
 
 <script>
 import L from 'leaflet'
-// import MagnifyIcon from 'vue-material-design-icons/Magnify.vue'
-import PlusIcon from 'vue-material-design-icons/Plus'
-import MinusIcon from 'vue-material-design-icons/Minus'
 import ViewGridIcon from 'vue-material-design-icons/ViewGrid.vue'
 import ViewSequentialIcon from 'vue-material-design-icons/ViewSequential.vue'
 import ViewParallelIcon from 'vue-material-design-icons/ViewParallel.vue'
 import PlotTraitChart from '@/components/charts/PlotTraitChart'
+import PlotTraitTable from '@/components/PlotTraitTable'
 
 export default {
   data: function () {
@@ -145,12 +129,11 @@ export default {
     }
   },
   components: {
-    PlusIcon,
-    MinusIcon,
     ViewGridIcon,
     ViewParallelIcon,
     ViewSequentialIcon,
-    PlotTraitChart
+    PlotTraitChart,
+    PlotTraitTable
   },
   filters: {
     toFixed: function (v) {
@@ -158,9 +141,6 @@ export default {
     }
   },
   methods: {
-    isSelected: function (trait) {
-      return this.selectedTraits.indexOf(this.location.id + '-' + trait.traitid) !== -1
-    },
     onLocationSelected: function (l, event) {
       if (event) {
         event.preventDefault()
@@ -190,30 +170,28 @@ export default {
     }
   },
   mounted: function () {
-    var vm = this
-
-    this.apiGetLocations(function (result) {
-      var withGps = result.filter(function (l) {
+    this.apiGetLocations(result => {
+      var withGps = result.filter(l => {
         return l.latitude && l.longitude
       })
-      vm.locationsWithoutGps = result.filter(function (l) {
+      this.locationsWithoutGps = result.filter(l => {
         return !l.latitude || !l.longitude
       })
-      withGps.forEach(function (l) {
+      withGps.forEach(l => {
         l.latLng = L.latLng(l.latitude, l.longitude)
       })
-      vm.locationsWithGps = withGps
+      this.locationsWithGps = withGps
 
-      vm.locationsWithGps.forEach(function (l) {
-        vm.latLngBounds.extend(l.latLng)
+      this.locationsWithGps.forEach(l => {
+        this.latLngBounds.extend(l.latLng)
       })
 
-      if (vm.locationsWithGps.length === 1) {
-        vm.$refs.map.setCenter(vm.locationsWithGps[0].latLng)
-        // vm.$refs.map.setZoom(10)
-        vm.zoom = 10
+      if (this.locationsWithGps.length === 1) {
+        this.$refs.map.setCenter(this.locationsWithGps[0].latLng)
+        // this.$refs.map.setZoom(10)
+        this.zoom = 10
       } else {
-        vm.$refs.map.fitBounds(vm.latLngBounds.pad(0.1))
+        this.$refs.map.fitBounds(this.latLngBounds.pad(0.1))
       }
     })
   }

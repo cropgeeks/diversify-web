@@ -2,7 +2,6 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import { ClientTable } from 'vue-tables-2'
 import api from './mixin/api.js'
 import mixin from './mixin/mixin.js'
 import BootstrapVue from 'bootstrap-vue'
@@ -18,7 +17,6 @@ let axiosDefaults = require('axios/lib/defaults')
 Vue.use(BootstrapVue)
 Vue.mixin(mixin)
 Vue.mixin(api)
-Vue.use(ClientTable, {}, false, 'bootstrap4', 'default')
 
 Vue.component('l-map', LMap)
 Vue.component('l-tile-layer', LTileLayer)

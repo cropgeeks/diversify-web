@@ -1,21 +1,32 @@
 <template>
   <div>
-    <v-client-table class="table-sm" :data="varieties" :columns="varietyColumns" :options="varietyOptions" ref="table">
-      <span class="font-italic" slot="croplatinname" slot-scope="props">{{ props.row.croplatinname }}
-      </span>
-      <b-button v-if="props.row.selected"
-                size=sm
+    <b-input v-model="filter" placeholder="Filter" class="border-bottom-0 table-filter" />
+
+    <b-table striped hover responsive outlined show-empty small class="mb-0"
+             :items="varieties"
+             :fields="fields"
+             :filter="filter"
+             :per-page="10"
+             head-variant="dark"
+             :current-page="currentPage"
+             :sort-by.sync="sortBy">
+      <template v-slot:cell(selected)="data">
+        <b-button v-if="data.item.selected"
+                size="sm"
                 variant="danger"
-                slot="select"
-                slot-scope="props"
-                @click="select(props.row, false)"><MinusBoxIcon :width="5" :height="5" /></b-button>
-      <b-button v-else
-                size=sm
-                variant="success"
-                slot="select"
-                slot-scope="props"
-                @click="select(props.row, true)"><PlusBoxIcon /></b-button>
-    </v-client-table>
+                @click="select(data.item, false)"><MinusBoxIcon :width="5" :height="5" /></b-button>
+        <b-button v-else
+                  size="sm"
+                  variant="success"
+                  @click="select(data.item, true)"><PlusBoxIcon :width="5" :height="5" /></b-button>
+      </template>
+    </b-table>
+
+    <b-pagination
+      class="table-pagination"
+      v-model="currentPage"
+      :total-rows="varieties.length"
+      :per-page="10" />
   </div>
 </template>
 
@@ -27,25 +38,39 @@ export default {
   data: function () {
     return {
       varieties: [],
-      varietyColumns: ['varietyname', 'cropcommonname', 'croplatinname', 'plantpartnername', 'plots', 'datapoints', 'select'],
-      varietyOptions: {
-        headings: {
-          varietyname: 'Variety',
-          cropcommonname: 'Species common name',
-          croplatinname: 'Species latin name',
-          plantpartnername: 'Plant partner',
-          plots: '# Plots',
-          datapoints: '# Datapoints',
-          select: ''
-        },
-        sortable: ['varietyname', 'cropcommonname', 'croplatinname', 'plantpartnername', 'plots', 'datapoints'],
-        filterable: ['varietyname', 'cropcommonname', 'croplatinname', 'plantpartnername', 'plots', 'datapoints'],
-        perPage: 10,
-        perPageValues: [10, 25, 50, 100],
-        pagination: {
-          nav: 'scroll'
-        }
-      }
+      fields: [{
+        key: 'varietyname',
+        label: 'Variety',
+        sortable: true
+      }, {
+        key: 'cropcommonname',
+        label: 'Species common name',
+        sortable: true
+      }, {
+        key: 'croplatinname',
+        label: 'Species latin name',
+        sortable: true
+      }, {
+        key: 'plantpartnername',
+        label: 'Plant partner',
+        sortable: true
+      }, {
+        key: 'plots',
+        label: '# Plots',
+        sortable: true
+      }, {
+        key: 'datapoints',
+        label: '# Datapoints',
+        sortable: true
+      }, {
+        key: 'selected',
+        label: '',
+        sortable: false
+      }],
+      filter: null,
+      currentPage: 1,
+      selected: [],
+      sortBy: 'traitname'
     }
   },
   components: {
@@ -54,21 +79,21 @@ export default {
   },
   methods: {
     select: function (row, select) {
-      this.varieties.filter(function (c) {
-        return c.id === row.id
+      this.varieties.filter(function (t) {
+        return t.id === row.id
       })[0].selected = select
 
-      this.$emit('on-variety-selected', row, select)
+      this.selected = this.varieties.filter(function (t) {
+        return t.selected
+      })
+
+      this.$emit('variety-selected', row, select)
     }
   },
   mounted: function () {
-    var vm = this
-
-    this.apiGetVarieties(function (result) {
-      result.forEach(function (c) {
-        c.selected = false
-      })
-      vm.varieties = result
+    this.apiGetVarieties(result => {
+      result.forEach(c => { c.selected = false })
+      this.varieties = result
     })
   }
 }

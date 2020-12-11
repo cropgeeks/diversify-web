@@ -3,10 +3,10 @@
     <h1>Species data</h1>
 
     <h2 class="mt-3">Varieties</h2>
-    <VarietyTable @on-variety-selected="onVarietySelected"/>
+    <VarietyTable @variety-selected="onVarietySelected"/>
 
     <h2 class="mt-3">Traits</h2>
-    <VarietyDataTraitTable @on-traits-selected="onTraitsSelected"/>
+    <TraitTable granularity="species" v-on:traits-selected="traits => { selectedTraits = traits }"/>
 
     <template v-if="selectedVarieties && selectedVarieties.length > 0">
       <h3>Selected varieties</h3>
@@ -37,7 +37,7 @@
 <script>
 import Vue from 'vue'
 import VarietyTable from '../components/VarietyTable.vue'
-import VarietyDataTraitTable from '../components/VarietyDataTraitTable.vue'
+import TraitTable from '../components/TraitTable.vue'
 
 export default {
   data: function () {
@@ -47,9 +47,12 @@ export default {
       plotData: {},
       plotLayout: {
         boxmode: 'group',
-        height: 400,
+        height: 500,
         yaxis: {
           title: 'Value'
+        },
+        legend: {
+          orientation: 'h'
         }
       },
       plotOptions: {
@@ -59,7 +62,7 @@ export default {
   },
   components: {
     VarietyTable,
-    VarietyDataTraitTable
+    TraitTable
   },
   computed: {
     canPlot () {
@@ -126,9 +129,6 @@ export default {
           return n.id !== variety.id
         })
       }
-    },
-    onTraitsSelected: function (traits) {
-      this.selectedTraits = traits
     }
   },
   mounted: function () {

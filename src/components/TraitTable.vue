@@ -7,6 +7,7 @@
              :fields="fields"
              :filter="filter"
              :per-page="10"
+             head-variant="dark"
              :current-page="currentPage"
              :sort-by.sync="sortBy">
       <template v-slot:cell(selected)="data">
@@ -34,38 +35,55 @@ import MinusBoxIcon from 'vue-material-design-icons/MinusBox.vue'
 import PlusBoxIcon from 'vue-material-design-icons/PlusBox.vue'
 
 export default {
+  props: {
+    granularity: {
+      type: String,
+      default: null
+    }
+  },
   data: function () {
+    let fields = [{
+      key: 'traitname',
+      label: 'Trait name',
+      sortable: true
+    }, {
+      key: 'traitcode',
+      label: 'Trait code',
+      sortable: true
+    }, {
+      key: 'unit',
+      label: 'Unit',
+      sortable: true
+    }]
+
+    if (this.granularity === null || this.granularity === 'species') {
+      fields.push({
+        key: 'speciesDataPoints',
+        label: 'Species data points',
+        sortable: true
+      })
+    }
+    if (this.granularity === null || this.granularity === 'plot') {
+      fields.push({
+        key: 'plotDataPoints',
+        label: 'Plot data points',
+        sortable: true
+      })
+    }
+
+    fields.push({
+      key: 'selected',
+      label: '',
+      sortable: false
+    })
+
     return {
       filter: null,
       currentPage: 1,
       traits: [],
       selected: [],
       sortBy: 'traitname',
-      fields: [{
-        key: 'traitname',
-        label: 'Trait name',
-        sortable: true
-      }, {
-        key: 'traitcode',
-        label: 'Trait code',
-        sortable: true
-      }, {
-        key: 'unit',
-        label: 'Unit',
-        sortable: true
-      }, {
-        key: 'speciesDataPoints',
-        label: 'Species data points',
-        sortable: true
-      }, {
-        key: 'plotDataPoints',
-        label: 'Plot data points',
-        sortable: true
-      }, {
-        key: 'selected',
-        label: '',
-        sortable: false
-      }]
+      fields: fields
     }
   },
   components: {

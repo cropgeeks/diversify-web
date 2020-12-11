@@ -1,7 +1,7 @@
 <template>
   <b-container>
     <h1>Varieties</h1>
-    <VarietyTable @on-variety-selected="onVarietySelected" />
+    <VarietyTable @variety-selected="onVarietySelected" />
     <div v-for="variety in selectedVarieties" :key="`variety-trait-stats-${variety.id}`" >
       <h2>{{ variety.varietyname }} <small>({{ variety.cropcommonname }})</small></h2>
       <div :ref="`barChart-${variety.id}`" />

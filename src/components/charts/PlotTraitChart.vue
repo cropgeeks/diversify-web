@@ -1,10 +1,10 @@
 <template>
-  <div v-if="data && data.length > 0">
+  <div v-if="plotData && plotData.length > 0">
     <b-button @click="$emit('clear')">Clear</b-button>
     <div v-for="cd in chartData" :key="`plot-level-chart-${cd.trait.traitId}`">
       <h3>{{ cd.trait.traitname }} - <small>{{ cd.site.name }} - {{ cd.trait.year }}</small></h3>
 
-      <div :ref="`plot-data-${cd.trait.traitId}`" />
+      <div :ref="`plot-data-${cd.site.id}-${cd.trait.traitId}`" />
     </div>
   </div>
 </template>
@@ -14,13 +14,13 @@ import Vue from 'vue'
 
 export default {
   props: {
-    data: {
+    plotData: {
       type: Array,
       default: () => []
     }
   },
   watch: {
-    data: function (newValue, oldValue) {
+    plotData: function (newValue, oldValue) {
       this.chartData = {}
       newValue.forEach(n => {
         var crops = this.$_.uniqBy(n, 'crops').map(function (t) { return t.crops })
@@ -50,7 +50,8 @@ export default {
           })
         }
 
-        Vue.set(this.chartData, n[0].traitId, {
+        const id = `${n[0].siteid}-${n[0].traitId}`
+        Vue.set(this.chartData, id, {
           trait: {
             year: n[0].year,
             traitname: n[0].traitname,
@@ -63,7 +64,6 @@ export default {
           data: data
         })
 
-        const id = n[0].traitId
         this.$nextTick(() => {
           this.$plotly.purge(this.$refs[`plot-data-${id}`][0])
           this.$plotly.plot(this.$refs[`plot-data-${id}`][0], this.chartData[id].data, this.plotLayout, this.plotOptions)
