@@ -89,6 +89,7 @@ export default {
         for (var t = 0; t < traits.length; t++) {
           var varieties = this.$_(result).filter(['traitname', traits[t].name]).uniqBy('varietyname').value().map(function (v) { return { varietyname: v.varietyname, cropname: v.cropname } })
 
+          let localPlotLayout = JSON.parse(JSON.stringify(this.plotLayout))
           let localData = []
           for (var v = 0; v < varieties.length; v++) {
             const varietyName = varieties[v].varietyname
@@ -102,6 +103,14 @@ export default {
               Vue.set(this.speciesTraitChartColors, varietyName, color)
             }
 
+            const ys = this.$_.filter(result, { varietyname: varietyName, traitname: traits[t].name }).map(function (n) { return n.value })
+            const isDates = ys.filter(y => y !== undefined && y !== null && y.split('-').length === 3 && !isNaN(Date.parse(y))).length > 0
+
+            if (isDates) {
+              localPlotLayout.yaxis.type = 'date'
+              localPlotLayout.yaxis.tickFormat = '%Y-%m-%d'
+            }
+
             localData.push({
               x: this.$_.filter(result, { varietyname: varietyName, traitname: traits[t].name }).map(function (n) { return n.partnername }),
               xaxis: 'xaxis',
@@ -110,14 +119,14 @@ export default {
               type: 'box',
               marker: { color: color },
               boxpoints: false,
-              y: this.$_.filter(result, { varietyname: varietyName, traitname: traits[t].name }).map(function (n) { return n.value })
+              y: ys
             })
           }
 
           Vue.set(this.plotData, traits[t].id, localData)
 
           const id = traits[t].id
-          this.$nextTick(() => this.$plotly.plot(this.$refs[`species-data-plot-${id}`][0], this.plotData[id], this.plotLayout, this.plotOptions))
+          this.$nextTick(() => this.$plotly.plot(this.$refs[`species-data-plot-${id}`][0], this.plotData[id], localPlotLayout, this.plotOptions))
         }
       })
     },

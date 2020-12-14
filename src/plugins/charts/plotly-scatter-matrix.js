@@ -156,19 +156,36 @@ export function plotlyScatterMatrix() {
 		return rows.filter(function (row) {
 			return row[referenceColumn] === referenceValue;
 		}).map(function (row) {
-			if (row[key] === '') {
-				return NaN
-			} else {
-				var value = parseFloat(row[key])
-
-				if (isNaN(value)) {
-					return row[key];
-				} else {
-					return value;
-				}
-			}
+			return extractValue(row, key)
 		})
-	}
+  }
+
+  function extractValue(row, key) {
+    const dataPoint = row[key]
+    if (dataPoint === undefined || dataPoint === null || dataPoint === '') {
+      return null
+    } else {
+      let isDate = false
+
+      if (key === 'Date') {
+        isDate = true
+      } else if (dataPoint.split('-').length === 3 && !isNaN(Date.parse(dataPoint))) {
+        isDate = true
+      }
+
+      if (isDate) {
+        return dataPoint;
+      } else {
+        var value = parseFloat(dataPoint)
+
+        if (isNaN(value)) {
+          return dataPoint;
+        } else {
+          return value;
+        }
+      }
+    }
+  }
 
 	function uuidv4() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
