@@ -56,6 +56,7 @@ export default {
         }
       },
       plotOptions: {
+        responsive: true,
         displaylogo: false
       }
     }
