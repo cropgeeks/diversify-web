@@ -23,9 +23,9 @@
         </div>
       </div>
     </div>
-    <b-container class="home-container">
-      <h1>Diversify</h1>
-      <p>Something here</p>
+    <b-container class="home-container" style="margin-bottom: 200px;">
+      <h1>DIVERSify</h1>
+      <p>The DIVERSify project aims to <b>optimise the performance of crop species mixtures or 'plant teams'</b> to improve yield stability, reduce pest and disease damage, and enhance stress resilience in agricultural systems. It focuses on improving the productivity and sustainability of European agriculture using an approach that has global relevance, <b>learning from the experience of international researchers and stakeholders</b>.</p>
     </b-container>
   </div>
 </template>
