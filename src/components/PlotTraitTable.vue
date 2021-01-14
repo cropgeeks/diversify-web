@@ -9,7 +9,8 @@
              :per-page="10"
              head-variant="dark"
              :current-page="currentPage"
-             :sort-by.sync="sortBy">
+             :sort-by.sync="sortBy"
+             @filtered="onFiltered">
       <template v-slot:cell(min)="data">{{ data.item.min | toFixed }}</template>
       <template v-slot:cell(avg)="data">{{ data.item.avg | toFixed }}</template>
       <template v-slot:cell(max)="data">{{ data.item.max | toFixed }}</template>
@@ -29,7 +30,7 @@
     <b-pagination
       class="table-pagination"
       v-model="currentPage"
-      :total-rows="siteStats.length"
+      :total-rows="totalRows"
       :per-page="10" />
   </div>
 </template>
@@ -53,6 +54,7 @@ export default {
     return {
       filter: null,
       currentPage: 1,
+      totalRows: 0,
       siteStats: [],
       sortBy: 'traitname',
       fields: [{
@@ -111,6 +113,7 @@ export default {
             result.forEach(r => { r.selected = false })
           }
           this.siteStats = result
+          this.totalRows = result.length
         })
       }
     }
@@ -125,6 +128,10 @@ export default {
     }
   },
   methods: {
+    onFiltered: function (filteredItems) {
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    },
     select: function (row, select) {
       this.siteStats.filter(function (t) {
         return t.traitid === row.traitid

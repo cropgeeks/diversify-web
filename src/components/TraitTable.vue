@@ -9,7 +9,8 @@
              :per-page="10"
              head-variant="dark"
              :current-page="currentPage"
-             :sort-by.sync="sortBy">
+             :sort-by.sync="sortBy"
+             @filtered="onFiltered">
       <template v-slot:cell(selected)="data">
         <b-button v-if="data.item.selected"
                 size="sm"
@@ -25,7 +26,7 @@
     <b-pagination
       class="table-pagination"
       v-model="currentPage"
-      :total-rows="traits.length"
+      :total-rows="totalRows"
       :per-page="10" />
   </div>
 </template>
@@ -80,6 +81,7 @@ export default {
     return {
       filter: null,
       currentPage: 1,
+      totalRows: 0,
       traits: [],
       selected: [],
       sortBy: 'traitname',
@@ -91,6 +93,10 @@ export default {
     PlusBoxIcon
   },
   methods: {
+    onFiltered: function (filteredItems) {
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    },
     select: function (row, select) {
       this.traits.filter(function (t) {
         return t.id === row.id
@@ -107,6 +113,7 @@ export default {
     this.apiGetTraits(result => {
       result.forEach(c => { c.selected = false })
       this.traits = result
+      this.totalRows = result.length
     })
   }
 }
