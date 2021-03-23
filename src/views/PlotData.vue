@@ -156,7 +156,6 @@ export default {
     clearCharts: function () {
       this.plotData = []
       this.selectedTraits = []
-      this.plotTraitChartColors = {}
     },
     onTraitSelected: function (trait) {
       if (this.selectedTraits.indexOf(this.location.id + '-' + trait.traitid) === -1) {

@@ -8,6 +8,7 @@
              :filter="filter"
              :per-page="10"
              head-variant="dark"
+             table-class="position-relative"
              :current-page="currentPage"
              :sort-by.sync="sortBy"
              @filtered="onFiltered">

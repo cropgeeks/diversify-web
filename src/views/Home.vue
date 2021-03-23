@@ -15,9 +15,9 @@
         <div class="row">
           <div class="col-md-10 offset-md-1">
             <div class="home-content">
-              <b-img fluid :src="require('@/assets/diversify.png')" />
-              <h1 class="white-text">Welcome to Diversify</h1>
-              <p class="white-text">Designing InnoVative plant teams for Ecosystem Resilience and agricultural Sustainability</p>
+              <b-img fluid :src="require('@/assets/diversiplotter.svg')" id="diversiplotter-logo" />
+              <h1 class="white-text">Welcome to DIVERSiplotter</h1>
+              <p class="white-text">A tool for Field Data Visualization based on the DIVERSify intercropping trials</p>
             </div>
           </div>
         </div>
@@ -25,7 +25,14 @@
     </div>
     <b-container class="home-container" style="margin-bottom: 200px;">
       <h1>DIVERSify</h1>
-      <p>The DIVERSify project aims to <b>optimise the performance of crop species mixtures or 'plant teams'</b> to improve yield stability, reduce pest and disease damage, and enhance stress resilience in agricultural systems. It focuses on improving the productivity and sustainability of European agriculture using an approach that has global relevance, <b>learning from the experience of international researchers and stakeholders</b>.</p>
+      <p>The <a href="https://www.plant-teams.eu/">DIVERSify project</a> aims to <b>optimise the performance of crop species mixtures or 'plant teams'</b> to improve yield stability, reduce pest and disease damage, and enhance stress resilience in agricultural systems. It focuses on improving the productivity and sustainability of European agriculture using an approach that has global relevance, <b>learning from the experience of international researchers and stakeholders</b>.</p>
+
+      <b-row class="mt-3 pt-3 d-flex align-items-center">
+        <b-col cols=3 md=1>
+          <b-img fluid :src="require('@/assets/eu.svg')"/>
+        </b-col>
+        <b-col cols=9 md=11>The project has received funding from the European Union’s Horizon 2020 research and innovation programme under agreement No. 727284.</b-col>
+      </b-row>
     </b-container>
   </div>
 </template>
@@ -36,6 +43,9 @@ export default {
 </script>
 
 <style>
+  #diversiplotter-logo {
+    max-height: 30vh;
+  }
   .home-container {
     margin-top: 100vh;
   }

@@ -20,8 +20,9 @@ export default {
     }
   },
   watch: {
-    plotData: function (newValue, oldValue) {
+    plotData: function (newValue) {
       this.chartData = {}
+      this.plotTraitChartColors = {}
       newValue.forEach(n => {
         var crops = this.$_.uniqBy(n, 'crops').map(function (t) { return t.crops })
 
